@@ -1,0 +1,83 @@
+body, html{
+	height: 100%;
+	margin: 0;
+	text-align: center;
+	font-family: 'Roboto', sans-serif;
+	
+}
+header{
+	width: 100%;
+	background-color: #2D2A21;
+	box-shadow: 0 0 10px 5px #2D2A21;
+	color: #89FF89;
+	position: relative;
+	z-index: 10;
+}
+header h1{
+	margin: 0;
+	font-size: 48px;
+	display: inline-block;
+	padding: 20px;
+	font-weight: 100;
+}
+#partsWrapper{
+	width: 60%;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	z-index: 0;
+	padding-top: 15px;
+	padding-bottom: 10px;
+}
+
+.part{
+	display: inline-block;
+	max-width: 10%;
+	cursor: pointer;
+	margin: 40px;
+}
+.part img{
+	width: 100%;
+}
+
+
+
+/*The following code is from
+https://css-tricks.com/snippets/css/scale-on-hover-with-webkit-transition/
+by Chris Coyier*/
+.part { transition: all .2s ease-in-out; }
+.part:hover { transform: scale(1.1); }
+
+
+/*The following code is from
+https://codepen.io/nohoid/pen/kIfto
+by Milan Nohejl*/
+.rainbow { 
+background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
+background-size: 1800% 1800%;
+
+-webkit-animation: rainbow 18s ease infinite;
+-z-animation: rainbow 18s ease infinite;
+-o-animation: rainbow 18s ease infinite;
+  animation: rainbow 18s ease infinite;}
+
+@-webkit-keyframes rainbow {
+    0%{background-position:0% 82%}
+    50%{background-position:100% 19%}
+    100%{background-position:0% 82%}
+}
+@-moz-keyframes rainbow {
+    0%{background-position:0% 82%}
+    50%{background-position:100% 19%}
+    100%{background-position:0% 82%}
+}
+@-o-keyframes rainbow {
+    0%{background-position:0% 82%}
+    50%{background-position:100% 19%}
+    100%{background-position:0% 82%}
+}
+@keyframes rainbow { 
+    0%{background-position:0% 82%}
+    50%{background-position:100% 19%}
+    100%{background-position:0% 82%}
+}
