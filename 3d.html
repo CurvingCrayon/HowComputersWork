@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="three.min.js"></script>
+		<script>
+		var scene, camera, renderer;
+		var geometry, material, mesh;
+		var mouse = false;
+		function init() {
+
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color(0x00000000);
+			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+			camera.position.z = 1000;
+			
+			var loader = new THREE.TDSLoader( );
+				loader.load( '3D/Computer.3ds', function ( object ) {
+					object.traverse( function ( child ) {
+						if ( child instanceof THREE.Mesh ) {
+							//child.material.map = texture;
+							//child.material.normalMap = normal;
+						}
+					} );
+					scene.add( object );
+				});
+
+			geometry = new THREE.BoxGeometry( 200, 200, 200 );
+			material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
+
+			mesh = new THREE.Mesh( geometry, material );
+			scene.add( mesh );
+			
+			renderer = new THREE.WebGLRenderer({alpha:true});
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			document.body.appendChild( renderer.domElement );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			mesh.rotation.x += 0.01;
+			mesh.rotation.y += 0.02;
+
+			renderer.render( scene, camera );
+
+		}
+		var raycaster = new THREE.Raycaster();
+		var mouse = new THREE.Vector2();
+
+		function onMouseMove( event ) {
+
+			// calculate mouse position in normalized device coordinates
+			// (-1 to +1) for both components
+
+			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+		}
+
+		function render() {
+			console.info("Render");
+			// update the picking ray with the camera and mouse position
+			raycaster.setFromCamera( mouse, camera );
+
+			// calculate objects intersecting the picking ray
+			var intersects = raycaster.intersectObjects( scene.children );
+
+			for ( var i = 0; i < intersects.length; i++ ) {
+
+				intersects[ i ].object.material.color.set( 0xff00ff );
+				console.info(intersects[i]);
+
+			}
+
+			renderer.render( scene, camera );
+
+		}
+
+		window.addEventListener( 'mousemove', onMouseMove, false );
+		window.addEventListener( 'mousedown', render, false );
+		</script>
+	</head>
+	<body onload="init();animate();">
+	</body>
+</html>
