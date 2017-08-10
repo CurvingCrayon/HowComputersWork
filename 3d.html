@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<script src="three.min.js"></script>
+		<script src="OBJLoader.js"></script>
 		<script>
 		var scene, camera, renderer;
 		var geometry, material, mesh;
@@ -9,20 +10,34 @@
 		function init() {
 
 			scene = new THREE.Scene();
-			scene.background = new THREE.Color(0x00000000);
+			scene.background = new THREE.Color(0x000ff000);
 			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
 			camera.position.z = 1000;
 			
-			var loader = new THREE.TDSLoader( );
-				loader.load( '3D/Computer.3ds', function ( object ) {
+				var onProgress = function ( xhr ) {
+					if ( xhr.lengthComputable ) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log( Math.round(percentComplete, 2) + '% downloaded' );
+					}
+				};
+				var onError = function ( xhr ) {
+				};
+	var loader = new THREE.OBJLoader( );
+				loader.load( '3D/Computer.obj', function ( object ) {
 					object.traverse( function ( child ) {
 						if ( child instanceof THREE.Mesh ) {
 							//child.material.map = texture;
-							//child.material.normalMap = normal;
 						}
 					} );
+					object.position.y = 0;
+					object.position.z = 100;
+					object.scale.x = 30;
+					object.scale.y = 30;
+					object.scale.z = 30;
+					
+					
 					scene.add( object );
-				});
+				},onProgress,onError);
 
 			geometry = new THREE.BoxGeometry( 200, 200, 200 );
 			material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
