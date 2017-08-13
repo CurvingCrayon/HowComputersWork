@@ -19,7 +19,36 @@ var names = {
 	"psu": "power supply"
 }
 function initMain(){
-	createLinks();
+	var threeD = checkWEBGL();
+	if(threeD){
+		//loadScripts(load3D);
+		load3D();
+	}
+	else{
+		loadIcons();
+		createLinks();
+	}
+	
+}
+function loadScripts(callback){
+	var script1 = document.createElement("SCRIPT");
+	script1.src = "three.min.js";
+	var script2 = document.createElement("SCRIPT");
+	script2.src = "OBJLoader.js";
+	var script3 = document.createElement("SCRIPT");
+	script3.src = "MTLloader.js";
+	script3.onload = callback;
+	document.head.appendChild(script1);
+	document.head.appendChild(script2);
+	document.head.appendChild(script3);
+}
+function load3D(){
+	init();
+	animate();
+}
+function loadIcons(){
+	
+	document.getElementById("partsWrapper").display="block";
 }
 function createLinks(){
 	var parts =  document.getElementsByClassName("part");
@@ -66,4 +95,14 @@ function initEmbed(){
 }
 function loadSlide(){
 	w3.slideshow(".slide",3000);
+}
+function checkWEBGL(){
+	if (Detector.webgl) {
+		return true;
+	} 
+	else{
+		var warning = Detector.getWebGLErrorMessage();
+		console.error(warning);
+		return false;
+	}
 }

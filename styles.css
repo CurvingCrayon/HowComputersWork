@@ -29,8 +29,11 @@ header h1{
 	z-index: 0;
 	padding-top: 15px;
 	padding-bottom: 10px;
+	display: none;
 }
-
+#main{
+	flex: 1;
+}
 .part{
 	display: inline-block;
 	max-width: 10%;
