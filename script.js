@@ -1,5 +1,6 @@
 var imgPath = "images/";
-var contentPath = "content/"
+var contentPath = "content/";
+var threeD;
 var images = {
 	"case": "case.png",
 	"gpu": "graphicsCard.png",
@@ -19,7 +20,7 @@ var names = {
 	"psu": "power supply"
 }
 function initMain(){
-	var threeD = checkWEBGL();
+	threeD = checkWEBGL();
 	if(threeD){
 		//loadScripts(load3D);
 		load3D();
