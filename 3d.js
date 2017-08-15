@@ -4,6 +4,8 @@ var mouse = false;
 var loaded = false;
 var prevSelected = false;
 var prevColor = false;
+var currentSelected = false;
+var currentColor = false;
 var selectColor = new THREE.Color(1,1,1);
 function init() {
 	scene = new THREE.Scene();
@@ -14,14 +16,14 @@ function init() {
 										 10000 );
 	camera.position.z = 1000;
 	 //Lighting
-	var ambient = new THREE.AmbientLight( 0x101030 );
-		scene.add( ambient );
-		var directionalLight = new THREE.DirectionalLight( 0xffeedd );
-		directionalLight.position.set( 0, 0, 1 );
-		scene.add( directionalLight );
+	var ambient = new THREE.AmbientLight(0x101030);
+	scene.add(ambient);
+	var directionalLight = new THREE.DirectionalLight(0xffeedd);
+	directionalLight.position.set(0,0,1);
+	scene.add(directionalLight);
 	
 	//Callback functions
-	var onProgress = function ( xhr ) {
+	var onProgress = function (xhr) {
 		if (xhr.lengthComputable) {
 			var percentComplete = xhr.loaded / xhr.total * 100;
 		}
@@ -67,7 +69,13 @@ function init() {
 	renderer.setSize( window.innerWidth, window.innerHeight);
 
 	document.getElementById("main").appendChild(renderer.domElement);
-
+	
+	if(threeD){
+		window.addEventListener( 'mousemove', onMouseMove, false );
+		window.addEventListener( 'touchmove', onMouseMove, false );
+		window.addEventListener( 'mousedown', select, false );
+		window.addEventListener( 'touchend', select, false );
+	}
 }
 
 function animate() {
@@ -88,35 +96,61 @@ var mouse = new THREE.Vector2();
 
 function onMouseMove(event) {
 	var rect = renderer.domElement.getBoundingClientRect();
-	mouse.x = ( ( event.clientX - rect.left ) / ( rect.width - rect.left ) ) * 2 - 1;
-	mouse.y = - ( ( event.clientY - rect.top ) / ( rect.bottom - rect.top) ) * 2 + 1;
-	render();
-}
-
-function render() {
-	console.log(prevColor);
+	mouse.x = ((event.clientX - rect.left)/(rect.width - rect.left))*2-1;
+	mouse.y = -((event.clientY - rect.top)/(rect.bottom - rect.top))*2+1;
 	// update the picking ray with the camera and mouse position
-	raycaster.setFromCamera( mouse, camera );
+	raycaster.setFromCamera(mouse,camera);
 
 	// calculate objects intersecting the picking ray
 	var intersects = raycaster.intersectObjects(scene.children, true);
-	if(prevSelected != false){
-		prevSelected.material.wireframe = true;
-		prevSelected.material.color = prevColor;
-	}
 	if(intersects.length > 0){ //If an object is picked;
 		if(intersects[0].object !== prevSelected){
-			if(prevSelected != intersects[0].object){
-				prevColor = intersects[0].object.material.color;
+			if(prevSelected != false && prevSelected !== currentSelected){
+				prevSelected.material.wireframe = true;	
+				if(checkCase(prevSelected)){
+					findObj("front").material.wireframe = true;
+					findObj("case").material.wireframe = true;
+				}
 			}
 			prevSelected = intersects[0].object;
-			//intersects[0].object.material.color.set(selectColor);
 		}
-		intersects[0].object.material.wireframe = false;				
+		intersects[0].object.material.wireframe = false;
+		if(checkCase(intersects[0].object)){
+			findObj("front").material.wireframe = false;
+			findObj("case").material.wireframe = false;
+		}
+	}
+	else{
+		if(prevSelected !== currentSelected && prevSelected != false){
+			prevSelected.material.wireframe = true;
+			if(checkCase(prevSelected)){
+				findObj("front").material.wireframe = true;
+				findObj("case").material.wireframe = true;
+			}
+			prevSelected = false;
+		}
 	}
 
-	renderer.render( scene, camera );
+	renderer.render(scene, camera);
 
+}
+function select(event){
+	if(currentSelected != false){
+		currentSelected.material.wireframe = true;
+		if(checkCase(currentSelected)){
+			findObj("front").material.wireframe = true;
+			findObj("case").wireframe = true;
+		}
+	}
+	currentSelected = prevSelected;
+	if(currentSelected != false){
+		currentSelected.material.wireframe = false;
+		if(checkCase(currentSelected)){
+			findObj("front").material.wireframe = true;
+			findObj("case").material.wireframe = true;
+		}
+		openContent(currentSelected.name);
+	}
 }
 function center(mesh){
 		var middle = new THREE.Vector3();
@@ -128,11 +162,23 @@ function center(mesh){
 		middle.y = (geometry.boundingBox.max.y + geometry.boundingBox.min.y) / 2;
 		middle.z = (geometry.boundingBox.max.z + geometry.boundingBox.min.z) / 2;
 
-		mesh.localToWorld( middle );
+		mesh.localToWorld(middle);
 }
-if(threeD){
-	window.addEventListener( 'mousemove', onMouseMove, false );
-	window.addEventListener( 'touchmove', onMouseMove, false );
-	window.addEventListener( 'mousedown', render, false );
-	window.addEventListener( 'touchend', render, false );
+function checkCase(obj){
+	objName = obj.name;
+	if(objName.search("case") != -1|| objName.search("front") != -1){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+function findObj(findName){
+	var newChild = false;
+	scene.traverse(function(child){
+		if(child.name.search(findName) != -1){
+			newChild = child;
+		}
+	});
+	return newChild;
 }

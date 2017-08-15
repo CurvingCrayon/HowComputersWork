@@ -7,6 +7,7 @@ var images = {
 	"cpu": "cpu.png",
 	"ram": "ram.png",
 	"motherboard": "mobo.png",
+	"mobo": "mobo.png",
 	"hdd": "hdd.png",
 	"psu": "psu.png"
 }
@@ -16,6 +17,7 @@ var names = {
 	"cpu": "processor",
 	"ram": "ram card",
 	"motherboard": "motherboard",
+	"mobo": "motherboard",
 	"hdd": "hard drive",
 	"psu": "power supply"
 }
@@ -89,7 +91,9 @@ function loadContent(){
 	var newFrame = document.createElement("IFRAME");
 	newFrame.className = "content";
 	newFrame.src = contentPath+urlId+".html";
-	document.body.appendChild(newFrame);
+//	newFrame.onload = function(event){event.currentTarget.style.height = event.currentTarget.contentWindow.document.body.scrollHeight + "px"}
+	newFrame.onresize = function(event){event.currentTarget.style.height = event.currentTarget.contentWindow.document.body.scrollHeight + "px"}
+	document.getElementById("contentWrapper").appendChild(newFrame);
 }
 function initEmbed(){
 	loadSlide();
@@ -105,5 +109,24 @@ function checkWEBGL(){
 		var warning = Detector.getWebGLErrorMessage();
 		console.error(warning);
 		return false;
+	}
+}
+function findObject(threeDName, filter){
+	threeDName = threeDName.replace("mobo","motherboard");
+	threeDName = threeDName.replace("front","case");		
+	for(var partNames in images){
+		if(threeDName.search(partNames) !== -1){
+			return partNames;
+		}
+	}
+	return false;
+}
+function openContent(name){
+	newName = findObject(name);
+	if(newName != false){
+		window.location = "content.html#"+newName;
+	}
+	else{
+		console.error("Couldn't find part " + name);
 	}
 }
